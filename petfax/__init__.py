@@ -1,12 +1,12 @@
-# config                    
 from flask import Flask
 from flask_migrate import Migrate
+from decouple import config
 
-# factory 
-def create_app(): 
+def create_app():
     app = Flask(__name__)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:$Ports4life@localhost:5432/petfax'
+    # Load configuration from .env file
+    app.config['SQLALCHEMY_DATABASE_URI'] = config('SQLALCHEMY_DATABASE_URI', default='')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     from . import models
@@ -15,16 +15,16 @@ def create_app():
 
     # index route
     @app.route('/')
-    def index(): 
+    def index():
         return 'Hello, PetFax!'
 
-    # register pet blueprint 
-    from . import pet 
+    # register pet blueprint
+    from . import pet
     app.register_blueprint(pet.pet_bp)
 
-    # register fact blueprint 
+    # register fact blueprint
     from . import fact
     app.register_blueprint(fact.bp)
 
-    # return the app 
+    # return the app
     return app
